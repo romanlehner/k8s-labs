@@ -1,0 +1,6 @@
+.terraform*
+terraform.lock*
+terraform.tfstate*
+--data
+--request
+istio-[0-9].*
