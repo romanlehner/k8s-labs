@@ -1,0 +1,5 @@
+.terraform*
+terraform.*
+--data
+--request
+istio-[0-9].*

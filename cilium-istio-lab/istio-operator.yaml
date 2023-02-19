@@ -1,0 +1,13 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  profile: minimal
+  meshConfig:
+    accessLogFile: /dev/stdout
+  components:
+    ingressGateways:
+    - name: istio-ingressgateway
+      enabled: true
+      label:
+        istio: ingressgateway
+        app: istio-ingressgateway
