@@ -1,0 +1,57 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: vault-provider
+spec:
+  package: xpkg.upbound.io/upbound/provider-vault:v0.4.0
+  runtimeConfigRef:
+    name: vault
+---
+apiVersion: vault.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: vault-gitops
+spec:
+  address: http://vault.vault:8200
+  add_address_to_env: true
+  credentials:
+    fs:
+      path: /vault/secrets/vault-token
+    source: Filesystem
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: vault
+spec:
+  deploymentTemplate:
+    spec:
+      replicas: 1
+      selector: {}
+      template:
+        metadata:
+          annotations:
+            vault.hashicorp.com/agent-init-first: "true"
+            vault.hashicorp.com/agent-inject: "true"
+            vault.hashicorp.com/agent-inject-token: "true" #defaults to /vault/secrets/token
+            # vault.hashicorp.com/agent-run-as-same-user: "true" #creating the token under the same user as the provider to avoid permission denied
+            vault.hashicorp.com/agent-run-as-user: "2000"
+            vault.hashicorp.com/auth-path: auth/kubernetes
+            vault.hashicorp.com/auth-type: kubernetes
+            vault.hashicorp.com/service: "http://vault.vault:8200"
+            vault.hashicorp.com/role: crossplane
+            vault.hashicorp.com/agent-inject-template-vault-token: | # the vault provider is not able to use the plain token, but needs it in json format
+              {{- with secret "auth/token/lookup-self" -}}
+                {
+                  "token": "{{ .Data.id }}"
+                }
+              {{- end }}
+  serviceAccountTemplate:
+    metadata:
+      name: vault-provider
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-provider
+  namespace: crossplane-system

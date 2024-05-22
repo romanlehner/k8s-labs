@@ -1,0 +1,66 @@
+apiVersion: auth.vault.upbound.io/v1alpha1
+kind: Backend
+metadata:
+  name: vcluster1
+spec:
+  forProvider:
+    # description: kubernetes authentication for vcluster1
+    type: kubernetes
+    path: vcluster1
+  providerConfigRef:
+    name: vault-gitops
+  providerRef:
+    name: vault-provider
+---
+apiVersion: kubernetes.vault.upbound.io/v1alpha1
+kind: AuthBackendConfig
+metadata:
+  name: vcluster1
+spec:
+  forProvider:
+    backend: vcluster1
+    kubernetesHost: http://vault.vault:8200
+  providerConfigRef:
+    name: vault-gitops
+  providerRef:
+    name: vault-provider
+---
+apiVersion: vault.vault.upbound.io/v1alpha1
+kind: Policy
+metadata:
+  name: vcluster1
+spec:
+  forProvider:
+    name: vcluster1-app
+    policy: |
+      path "secrets/vcluster1"
+      {
+        capabilities = ["update"]
+      }
+  providerConfigRef:
+    name: vault-gitops
+  providerRef:
+    name: vault-provider
+---
+apiVersion: kubernetes.vault.upbound.io/v1alpha1
+kind: AuthBackendRole
+metadata:
+  name: vcluster1-app
+spec:
+  forProvider:
+    backend: vcluster1
+    boundServiceAccountNames: 
+    - vcluster1-app-sa
+    boundServiceAccountNamespaces: 
+    - vcluster-app-ns
+    roleName: vcluster1-app
+    tokenPolicies: 
+    - vcluster1-app
+    tokenTtl: 86400
+  providerConfigRef:
+    name: vault-gitops
+  providerRef:
+    name: vault-provider
+
+
+
