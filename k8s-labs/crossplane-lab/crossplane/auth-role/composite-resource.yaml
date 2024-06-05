@@ -1,0 +1,14 @@
+---
+apiVersion: org.com/v1alpha1
+kind: XKubernetesVaultAuthRole
+metadata:
+  name: vcluster1-myapp
+spec:
+  backend: vcluster1
+  boundServiceAccountNames: 
+  - xxx
+  boundServiceAccountNamespaces: 
+  - default
+  roleName: vcluster1-myapp
+  tokenPolicies: 
+  - vcluster1-myapp

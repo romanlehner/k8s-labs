@@ -1,0 +1,48 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: kubernetes-vault-auth
+spec:
+  compositeTypeRef: 
+    apiVersion: org.com/v1alpha1
+    kind: XKubernetesVaultAuth
+  resources:
+  - base:
+      apiVersion: auth.vault.upbound.io/v1alpha1
+      kind: Backend
+      spec:
+        forProvider:
+          description: kubernetes authentication for vcluster1
+          type: kubernetes
+          path: # needs to be patched
+        providerConfigRef:
+          name: vault-gitops
+        providerRef:
+          name: vault-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.path
+  - base:
+      apiVersion: kubernetes.vault.upbound.io/v1alpha1
+      kind: AuthBackendConfig
+      spec:
+        forProvider:
+          backend: # needs to be patched
+          kubernetesHost: # needs to be patched 
+          kubernetesCaCert: # needs to be patched [optional]
+        providerConfigRef:
+          name: vault-gitops
+        providerRef:
+          name: vault-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: metadata.name
+      toFieldPath: spec.forProvider.backend
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.kubernetesHost
+      toFieldPath: spec.forProvider.kubernetesHost
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.kubernetesCaCert
+      toFieldPath: spec.forProvider.kubernetesCaCert

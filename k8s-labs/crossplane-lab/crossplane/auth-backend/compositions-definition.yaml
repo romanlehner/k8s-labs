@@ -1,0 +1,32 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata: 
+  name: xkubernetesvaultauths.org.com
+spec:
+  group: org.com
+  names:
+    kind: XKubernetesVaultAuth
+    plural: xkubernetesvaultauths
+  claimNames:
+    kind: KubernetesVaultAuth
+    plural: kubernetesvaultauths
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              kubernetesHost:
+                type: string
+                description: The URL to reach Vault server e.g. http://vault.vault:8200, https://vault.example.com
+              kubernetesCaCert:
+                type: string
+                description: The full CA chain, so that vault trusts the certficiate of the kube API server
+            required:
+            - kubernetesHost    

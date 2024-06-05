@@ -15,11 +15,12 @@ spec:
 apiVersion: kubernetes.vault.upbound.io/v1alpha1
 kind: AuthBackendConfig
 metadata:
-  name: vcluster1
+  name: vcluster1 
 spec:
   forProvider:
     backend: vcluster1
     kubernetesHost: http://vault.vault:8200
+    kubernetesCaCert: 
   providerConfigRef:
     name: vault-gitops
   providerRef:

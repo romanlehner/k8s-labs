@@ -1,0 +1,51 @@
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata: 
+  name: xkubernetesvaultauthroles.org.com
+spec:
+  group: org.com
+  names:
+    kind: XKubernetesVaultAuthRole
+    plural: xkubernetesvaultauthroles
+  claimNames:
+    kind: KubernetesVaultAuthRole
+    plural: kubernetesvaultauthroles
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              roleName:
+                type: string
+                description: The name of the role
+              tokenPolicies: 
+                type: array
+                items:
+                  type: string
+                description: The array of vault policies that should be assigned to this role [default=???]
+              backend:
+                type: string
+                description: The path of the kubernetes auth backend configured in vault
+              boundServiceAccountNames:
+                type: array
+                items:
+                  type: string
+                description: The array of service accounts that are allowed to assume this role
+              boundServiceAccountNamespaces:
+                type: array
+                items:
+                  type: string
+                description: The array of namespaces that the service account resides in
+            required:
+            - roleName
+            - backend
+            - boundServiceAccountNames
+            - boundServiceAccountNamespaces
+              

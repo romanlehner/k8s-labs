@@ -36,7 +36,7 @@ vault write auth/kubernetes/config kubernetes_host="https://crossplane-control-p
 
 vault write auth/kubernetes/role/crossplane-providers \
     bound_service_account_names="vault-provider" \
-    bound_service_account_namespaces=crossplane-system \
+    bound_service_account_namespaces=crossplane \
     policies=crossplane \
     ttl=24h
 
@@ -74,17 +74,17 @@ EOF
 ## install crossplane
 ```bash
 helm repo add crossplane-stable https://charts.crossplane.io/stable
-helm install crossplane --namespace crossplane-system --create-namespace crossplane-stable/crossplane
+helm install crossplane --namespace crossplane --create-namespace crossplane-stable/crossplane
 ```
 
 ## install crossplane vault provider
 ```bash
-kubectl apply -f crossplane-system/provider.yaml
+kubectl apply -f crossplane/provider.yaml
 ```
 
 ## test the configuration
 ```bash
-kubectl apply -f crossplane-system/test.yaml
+kubectl apply -f crossplane/test.yaml
 
 # check the reconsilation status of crossplane
 watch kubectl get managed
@@ -94,9 +94,37 @@ You can check the resources through Vault UI being created. When manually deleti
 
 To instruct crossplane to delete the managed resources:
 ```bash
-kubectl delete -f crossplane-system/test.yaml
+kubectl delete -f crossplane/test.yaml
 
 # check the reconsilation status of crossplane
 watch kubectl get managed
 ```
 Verify the resources are no longer in Vault through the vault UI.
+
+## test crossplane composition
+The test above uses plain managed resources. In this section compositions and claims are used to create resources in vault, which allows to specify custom resource definitions exposing the vault auth configuration through a custom API.
+
+```bash
+# auth backend and config
+kubectl apply -f crossplane/auth-backend/composition-definition.yaml
+kubectl apply -f crossplane/auth-backend/composition.yaml
+kubectl apply -f crossplane/auth-backend/composite-resource.yaml
+kubectl apply -f crossplane/auth-backend/claim.yaml
+
+# auth role and policy
+kubectl apply -f crossplane/auth-role/composition-definition.yaml
+kubectl apply -f crossplane/auth-role/composition-role.yaml
+kubectl apply -f crossplane/auth-role/composite-resource.yaml
+kubectl apply -f crossplane/auth-role/claim.yaml
+```
+
+Verify the resources have been created successfully:
+```bash
+kubectl get managed,compositions,xrd
+
+# useful vault commands to check
+kubectl exec -it vault-0 -n vault -- vault auth list
+kubectl exec -it vault-0 -n vault -- vault read auth/vcluster1/config
+kubectl exec -it vault-0 -n vault -- vault list auth/vcluster1/role
+kubectl exec -it vault-0 -n vault -- vault policy list
+```

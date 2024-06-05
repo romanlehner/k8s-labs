@@ -1,0 +1,7 @@
+---
+apiVersion: org.com/v1alpha1
+kind: KubernetesVaultAuth
+metadata:
+  name: vcluster
+spec:
+  kubernetesHost: https://argo-control-plane:6443

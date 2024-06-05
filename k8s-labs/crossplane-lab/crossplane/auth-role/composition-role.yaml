@@ -1,0 +1,61 @@
+
+---
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: kubernetes-vault-auth-role
+spec:
+  compositeTypeRef: 
+    apiVersion: org.com/v1alpha1
+    kind: XKubernetesVaultAuthRole
+  resources:
+  - base:
+      apiVersion: kubernetes.vault.upbound.io/v1alpha1
+      kind: AuthBackendRole
+      spec:
+        forProvider:
+          backend:
+          boundServiceAccountNames: 
+          boundServiceAccountNamespaces: 
+          roleName:
+          tokenPolicies:
+          tokenTtl: 86400
+        providerConfigRef:
+          name: vault-gitops
+        providerRef:
+          name: vault-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.roleName
+      toFieldPath: spec.forProvider.roleName
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.tokenPolicies
+      toFieldPath: spec.forProvider.tokenPolicies
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.backend
+      toFieldPath: spec.forProvider.backend
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.boundServiceAccountNames
+      toFieldPath: spec.forProvider.boundServiceAccountNames
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.boundServiceAccountNamespaces
+      toFieldPath: spec.forProvider.boundServiceAccountNamespaces
+  - base:
+      apiVersion: vault.vault.upbound.io/v1alpha1
+      kind: Policy
+      spec:
+        forProvider:
+          name:
+          policy: |
+            path "secrets/vcluster1"
+            {
+              capabilities = ["update"]
+            }
+        providerConfigRef:
+          name: vault-gitops
+        providerRef:
+          name: vault-provider
+    patches:
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.roleName
+      toFieldPath: spec.forProvider.name

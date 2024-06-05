@@ -1,0 +1,14 @@
+---
+apiVersion: org.com/v1alpha1
+kind: KubernetesVaultAuthRole
+metadata:
+  name: vcluster1-myapp-fromclaim
+spec:
+  backend: vcluster1
+  boundServiceAccountNames: 
+  - xxx
+  boundServiceAccountNamespaces: 
+  - default
+  roleName: vcluster1-myapp-fromclaim
+  tokenPolicies: 
+  - vcluster1-myapp-fromclaim
