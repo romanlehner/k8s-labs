@@ -40,22 +40,23 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: spec.boundServiceAccountNamespaces
       toFieldPath: spec.forProvider.boundServiceAccountNamespaces
-  - base:
-      apiVersion: vault.vault.upbound.io/v1alpha1
-      kind: Policy
-      spec:
-        forProvider:
-          name:
-          policy: |
-            path "secrets/vcluster1"
-            {
-              capabilities = ["update"]
-            }
-        providerConfigRef:
-          name: vault-gitops
-        providerRef:
-          name: vault-provider
-    patches:
-    - type: FromCompositeFieldPath
-      fromFieldPath: spec.roleName
-      toFieldPath: spec.forProvider.name
+  # Todo: decide if the policy and a dedicated secret path should be created from crossplane
+  # - base:
+  #     apiVersion: vault.vault.upbound.io/v1alpha1
+  #     kind: Policy
+  #     spec:
+  #       forProvider:
+  #         name:
+  #         policy: |
+  #           path "secrets/vcluster1"
+  #           {
+  #             capabilities = ["update"]
+  #           }
+  #       providerConfigRef:
+  #         name: vault-gitops
+  #       providerRef:
+  #         name: vault-provider
+  #   patches:
+  #   - type: FromCompositeFieldPath
+  #     fromFieldPath: spec.roleName
+  #     toFieldPath: spec.forProvider.name

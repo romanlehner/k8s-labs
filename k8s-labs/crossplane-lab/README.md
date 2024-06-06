@@ -2,6 +2,12 @@
 
 In this lab I used crossplane to manage resources in hashicorp vault. By using the vault kubernetes authentication, crossplane can use its service account to authenticate to vault, assume a vault role and create resources scoped by the vault policy attached to the role.
 
+Tempnote:
+Terraform creates the auth for crossplane and creates a secret `static/db` and a policy to access the secret `db_access`. Crossplane creates a kubernetes auth and a role for the vault client test application, accessing the secret with vault agent and renders it on screen.
+TODO: 
+- run vault client in vcluster and access the secret.
+- vault auth backend claim creates a auth with random suffix, currently the role claim requires a fixed backend name
+
 ## create kind cluster
 ```bash
 kind create cluster --name crossplane
@@ -105,17 +111,11 @@ Verify the resources are no longer in Vault through the vault UI.
 The test above uses plain managed resources. In this section compositions and claims are used to create resources in vault, which allows to specify custom resource definitions exposing the vault auth configuration through a custom API.
 
 ```bash
-# auth backend and config
+# install xrds
 kubectl apply -f crossplane/auth-backend/composition-definition.yaml
 kubectl apply -f crossplane/auth-backend/composition.yaml
-kubectl apply -f crossplane/auth-backend/composite-resource.yaml
-kubectl apply -f crossplane/auth-backend/claim.yaml
-
-# auth role and policy
 kubectl apply -f crossplane/auth-role/composition-definition.yaml
 kubectl apply -f crossplane/auth-role/composition-role.yaml
-kubectl apply -f crossplane/auth-role/composite-resource.yaml
-kubectl apply -f crossplane/auth-role/claim.yaml
 ```
 
 Verify the resources have been created successfully:
@@ -127,4 +127,14 @@ kubectl exec -it vault-0 -n vault -- vault auth list
 kubectl exec -it vault-0 -n vault -- vault read auth/vcluster1/config
 kubectl exec -it vault-0 -n vault -- vault list auth/vcluster1/role
 kubectl exec -it vault-0 -n vault -- vault policy list
+```
+
+Deploy the vault test client:
+```bash
+kubectl apply -f vault-test-client/client.yaml
+```
+
+Check if the secrets are rendered securly for everyone to see:
+```bash
+kubectl port-forward pod/$(kubectl get pod -l app=vault-client -o json | jq -r '.items[0].metadata.name') 8080:80
 ```

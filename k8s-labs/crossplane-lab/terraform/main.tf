@@ -53,3 +53,41 @@ data "vault_policy_document" "crossplane_policy" {
     capabilities = ["create", "delete", "list", "patch", "read", "update"]
   }
 }
+
+# Setup for secret store example
+# Creates a secret that will be accessed by the example app for testing kubernetes auth
+
+data "vault_policy_document" "db_access" {
+  rule {
+    path         = "static/data/db"
+    capabilities = ["read", "list"]
+  }
+}
+
+resource "vault_policy" "db_access" {
+  name   = "db_access"
+  policy = data.vault_policy_document.db_access.hcl
+}
+
+resource "vault_mount" "kvv2" {
+  path        = "static"
+  type        = "kv"
+  options     = { version = "2" }
+  description = "KV Version 2 secret engine mount"
+}
+
+resource "vault_kv_secret_v2" "service_secrets" {
+  mount                      = vault_mount.kvv2.path
+  name                       = "db"
+  cas                        = 1
+  delete_all_versions        = true
+  data_json                  = jsonencode(
+  {
+    user       = "admin",
+    pass       = "123"
+  }
+  )
+  custom_metadata {
+    max_versions = 5
+  }
+}
