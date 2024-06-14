@@ -1,0 +1,11 @@
+networking:
+  # ReplicateServices allows replicating services from the host within the virtual cluster or the other way around.
+  replicateServices:
+    # ToHost defines the services that should get synced from virtual cluster to the host cluster. If services are
+    # synced to a different namespace than the virtual cluster is in, additional permissions for the other namespace
+    # are required.
+    toHost: []
+    # FromHost defines the services that should get synced from the host to the virtual cluster.
+    fromHost:
+      - from: vault/vault
+        to: vault/vault

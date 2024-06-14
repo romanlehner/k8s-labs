@@ -1,0 +1,43 @@
+---
+apiVersion: org.com/v1alpha1
+kind: XKubernetesVaultAuth
+metadata:
+  name: vault-client
+spec:
+  kubernetesHost: https://v-cluster.team-x:443
+  disableLocalCaJwt: true
+  kubernetesCaCert: |
+    -----BEGIN CERTIFICATE-----
+    MIIDBTCCAe2gAwIBAgIIJ8Pb9vGTfQIwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
+    AxMKa3ViZXJuZXRlczAeFw0yNDA2MTQwODEyMTZaFw0zNDA2MTIwODEyMTZaMBUx
+    EzARBgNVBAMTCmt1YmVybmV0ZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+    AoIBAQDQWnoZQlzupdWSj6Mqd/tgmmTWSVB24eKAzeiELH15sYXl8hq+XF/hdVTt
+    kzheqjJuuS75qCI3KluAwnRzNubanT849yJeEK7cBmsNaUoyzEJH1/jBzKRfsNsw
+    MKyYtVBxlemQgJ+7yySVNRqOj1mx8rVxPoXyW2zaq/xU4+Ffi4TQa74dN01kBkR0
+    dTDXFOzr0ttGh2evIS1VsSxoGQPY3yOqIDF0UoUxN2b11WmMcQUcU7+x0uMJw1Qz
+    SuGHBGWYi1CMpORoOmVs59ravL1t3G4kynvbvkkaSe31ZVWjZ5rADyIyBIFcLlYj
+    aBVzzOkdqQXyNCPsOlkNBpVGLIHVAgMBAAGjWTBXMA4GA1UdDwEB/wQEAwICpDAP
+    BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSY7iVt/fcAR0bMtdlxF/PvJFovMDAV
+    BgNVHREEDjAMggprdWJlcm5ldGVzMA0GCSqGSIb3DQEBCwUAA4IBAQCffWV7bHBm
+    ddtxjvVb+CTVQfpOSbtJEM98dYWcOSWXztI1y+85wRS6eLYcBYIHESrJ/5U9Ly78
+    kqhPV3yYokjSaKZaAX1JQOKq0zIwQynWbebwybcHXm5avHmNqXVA4Doq3Gngft03
+    hlKAvijinCYxG2AJeCvmVTdns4IAl7/+g2DArFgCiA0+H/G4h+xV7z4+s/EoWClM
+    KPGB4t6vmjaTIZW66wiVf+U02SmEs5WaIReGyXnN2noTrVPS+BaqkG+V4s7kS+qk
+    0itQybcqUWUf1mtuQg1Lpv7pZEO9p17CLrl6Zskm2YJdqlPJPvHNmb8Kca62Hmk+
+    GicDWlG7GKQ0
+    -----END CERTIFICATE-----
+---
+apiVersion: org.com/v1alpha1
+kind: KubernetesVaultAuthRole
+metadata:
+  name: vault-client
+spec:
+  backend: vault-client
+  boundServiceAccountNames: 
+  - vault-client
+  boundServiceAccountNamespaces: 
+  - default
+  roleName: vault-client
+  tokenPolicies: 
+  - db_access
+---

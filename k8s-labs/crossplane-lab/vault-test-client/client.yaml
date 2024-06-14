@@ -106,25 +106,3 @@ data:
     </html>
     EOT
     }
----
-apiVersion: org.com/v1alpha1
-kind: XKubernetesVaultAuth
-metadata:
-  name: vault-client
-spec:
-  kubernetesHost: https://argo-control-plane:6443
----
-apiVersion: org.com/v1alpha1
-kind: KubernetesVaultAuthRole
-metadata:
-  name: vault-client
-spec:
-  backend: vault-client
-  boundServiceAccountNames: 
-  - vault-client
-  boundServiceAccountNamespaces: 
-  - default
-  roleName: vault-client
-  tokenPolicies: 
-  - db_access
----

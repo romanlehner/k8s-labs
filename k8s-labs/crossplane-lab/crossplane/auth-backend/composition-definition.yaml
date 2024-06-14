@@ -28,5 +28,8 @@ spec:
               kubernetesCaCert:
                 type: string
                 description: The full CA chain, so that vault trusts the certficiate of the kube API server
+              disableLocalCaJwt:
+                type: boolean
+                description: Forces vault to use the client service account token for the token review API
             required:
             - kubernetesHost    

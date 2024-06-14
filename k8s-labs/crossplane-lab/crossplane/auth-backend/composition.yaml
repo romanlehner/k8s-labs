@@ -13,7 +13,7 @@ spec:
       kind: Backend
       spec:
         forProvider:
-          description: kubernetes authentication for vcluster1
+          description: kubernetes authentication for vclusters
           type: kubernetes
           path: # needs to be patched
         providerConfigRef:
@@ -32,6 +32,7 @@ spec:
           backend: # needs to be patched
           kubernetesHost: # needs to be patched 
           kubernetesCaCert: # needs to be patched [optional]
+          disableLocalCaJwt: # need to be patched [optional]
         providerConfigRef:
           name: vault-gitops
         providerRef:
@@ -46,3 +47,6 @@ spec:
     - type: FromCompositeFieldPath
       fromFieldPath: spec.kubernetesCaCert
       toFieldPath: spec.forProvider.kubernetesCaCert
+    - type: FromCompositeFieldPath
+      fromFieldPath: spec.disableLocalCaJwt
+      toFieldPath: spec.forProvider.disableLocalCaJwt
