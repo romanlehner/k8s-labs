@@ -1,4 +1,4 @@
-# Crossplane Vault Lab
+# Crossplane vCluster Vault Lab
 
 In this lab I used crossplane to manage resources in hashicorp vault. By using the vault kubernetes authentication, crossplane can use its service account to authenticate to vault, assume a vault role and create resources scoped by the vault policy attached to the role.
 
