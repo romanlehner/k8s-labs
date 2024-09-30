@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-vault-plugin-test
+  namespace: argocd
+spec:
+  destination:
+    name: ''
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: k8s-labs/argo-vault-lab/test
+    repoURL: https://github.com/romanlehner/k8s-labs.git
+    targetRevision: HEAD

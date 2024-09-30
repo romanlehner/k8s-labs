@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-annotation
+  annotations:
+    avp.kubernetes.io/path: "static/data/token"
+data:
+  token: <token>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-inline
+data:
+  token: <path:static/data/token#token>
